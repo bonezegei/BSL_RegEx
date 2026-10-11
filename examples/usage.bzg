@@ -1,0 +1,86 @@
+include("lib/regex.bzg");
+
+// Instantiate the native RegEx object
+var re = regEx();
+
+// -------------------------------------------------------------------
+// 1. re.test(pattern, text)
+// Returns 1.0 (true) or 0.0 (false)
+// -------------------------------------------------------------------
+print("=== 1. Pattern Validation (test) ===");
+var email_pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+
+var valid_email = "dev_user123@example.com";
+var invalid_email = "invalid-email-address";
+
+
+print("Valid email check:   " + re.test(email_pattern, valid_email) );   // Output: 1
+
+print("Invalid email check: " + re.test(email_pattern, invalid_email) ); // Output: 0
+
+// -------------------------------------------------------------------
+// 2. re.match(pattern, text)
+// Returns an array where [0] is the full match, and subsequent indices
+// contain captured sub-groups.
+// -------------------------------------------------------------------
+print("\n=== 2. Capturing Groups (match) ===");
+var log_entry = "LOG_DATE [2026-10-11] STATUS [200] OK";
+var date_pattern = "\\[([0-9]{4})-([0-9]{2})-([0-9]{2})\\]";
+
+var match_res = re.match(date_pattern, log_entry);
+
+if (match_res) {
+    print("Full Match: "+ match_res[0]); // [2026-10-11]
+    print("Year:       "+ match_res[1]); // 2026
+    print("Month:      "+ match_res[2]); // 10
+    print("Day:        "+ match_res[3]); // 11
+}
+
+
+// -------------------------------------------------------------------
+// 3. re.findAll(pattern, text)
+// Returns an array of every non-overlapping pattern match in the string
+// -------------------------------------------------------------------
+print("\n=== 3. Extracting All Matches (findAll) ===");
+var invoice_text = "Item A: $12.50, Item B: $99.00, Item C: $3.99";
+var price_pattern = "\\$[0-9]+\\.[0-9]{2}";
+
+prices = re.findAll(price_pattern, invoice_text);
+print("Total price matches found: "+ prices.size);
+
+var i = 0;
+while (i < prices.size) {
+    print("  Match "+ i+ ": "+ prices[i]);
+    i = i + 1;
+}
+
+// -------------------------------------------------------------------
+// 4. re.replace(pattern, text, replacement)
+// Returns a new string with all pattern matches replaced
+// -------------------------------------------------------------------
+print("\n=== 4. Text Replacement (replace) ===");
+var raw_phone = "+1 (800) 555-0199 / +1-800-555-0100";
+var digit_pattern = "[0-9]";
+
+var masked_phone = re.replace(digit_pattern, raw_phone, "*");
+print("Original string: "+ raw_phone);
+print("Masked string:   "+ masked_phone);
+
+
+// -------------------------------------------------------------------
+// 5. re.split(pattern, text)
+// Splitting strings by regex delimiter into an array of tokens
+// -------------------------------------------------------------------
+print("\n=== 5. String Tokenization (split) ===");
+var csv_row = "apple, banana ; orange  , grape ; mango";
+var delimiter_pattern = "[,;\\s]+";
+
+var tokens = re.split(delimiter_pattern, csv_row);
+print("Total tokens parsed: "+ tokens.size);
+
+k = 0;
+while (k < tokens.size) {
+    print("  Token "+ k+ ": "+ tokens[k]);
+    k = k + 1;
+}
+
